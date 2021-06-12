@@ -1,63 +1,60 @@
 #include <iostream>
-#include <boost/bimap.hpp>
-#include <boost/flyweight.hpp>
+#include <string>
+#include <vector>
 
-using namespace std;
-using namespace boost;
+struct Sentence
+{
+    struct WordToken
+    {
+        bool capitalize;
+    };
 
-typedef uint32_t key;
-
-struct User {
-    User(const string& first, const string& last) : first(add(first)), last(add(last)) {}
-
-    string getFirst() const {
-        return dict.left.find(first)->get_right();
-    }
-
-    string getLast() const {
-        return dict.left.find(last)->get_right();
-    }
-
-    friend ostream &operator<<(ostream &os, const User &user) {
-        os << "first: " << user.getFirst() << " last: " << user.getLast();
-        return os;
-    }
-
-    key first, last;
-    static bimap<key, string> dict;
-    static key count;
-
-    static key add(string name) {
-        auto it = dict.right.find(name);
-        if (it != dict.right.end()) {
-            return it->get_left();
+    Sentence(const std::string& text)
+    {
+        char space = ' ';
+        int prv = 0;
+        for (int i = 0; (i = text.find(space, i)) != std::string::npos; i++) {
+            substrings.push_back(text.substr(prv, i - prv));
+            tokens.push_back({});
+            prv = i + 1;
         }
-        dict.insert({++count, name});
-        return count;
-    }
-};
-
-struct User2 {
-    User2(const string& firstName, const string& lastName) : firstName(firstName), lastName(lastName) {}
-
-    friend ostream &operator<<(ostream &os, const User2 &user) {
-        os << "firstName: " << user.firstName << " lastName: " << user.lastName;
-        return os;
+        if (prv < text.size()) {
+            substrings.push_back(text.substr(prv, text.size()));
+            tokens.push_back({});
+        }
     }
 
-    flyweight<string> firstName, lastName;
+    WordToken& operator[](size_t index)
+    {
+        return tokens[index];
+    }
+
+    std::string str() const
+    {
+        std::string result;
+        for (int i = 0; i < substrings.size(); i++) {
+            if (tokens[i].capitalize) {
+                std::string copy = substrings[i];
+                std::transform(copy.begin(), copy.end(), copy.begin(), ::toupper);
+                result.append(copy);
+            } else {
+                result.append(substrings[i]);
+            }
+            if (i < substrings.size() - 1) {
+                result.append(" ");
+            }
+        }
+        return result;
+    }
+
+private:
+    std::vector<std::string> substrings;
+    std::vector<WordToken> tokens;
 };
 
 int main() {
-    User u1 = {"John", "Wang"};
-    User u2 = {"Jane", "Wang"};
-    cout << u1 << endl << u2 << endl;
-    cout << (u1.first == u2.first) << endl;
-    cout << (u1.last == u2.last) << endl;
-
-    User2 user1 = {"John", "Wang"};
-    User2 user2 = {"Jane", "Wang"};
-    cout << user1 << endl << user2 << endl;
-    cout << (&user1.firstName.get() == &user2.firstName.get()) << endl;
-    cout << (&user1.lastName.get() == &user2.lastName.get()) << endl;
+    Sentence sentence("alpha beta gamma");
+    sentence[1].capitalize = true;
+    sentence[2].capitalize = true;
+    std::cout << sentence.str(); // prints "hello WORLD"
 }
