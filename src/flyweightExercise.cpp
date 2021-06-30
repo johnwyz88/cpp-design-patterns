@@ -52,9 +52,9 @@ private:
     std::vector<WordToken> tokens;
 };
 
-int main() {
-    Sentence sentence("alpha beta gamma");
-    sentence[1].capitalize = true;
-    sentence[2].capitalize = true;
-    std::cout << sentence.str(); // prints "hello WORLD"
-}
+//int main() {
+//    Sentence sentence("alpha beta gamma");
+//    sentence[1].capitalize = true;
+//    sentence[2].capitalize = true;
+//    std::cout << sentence.str(); // prints "hello WORLD"
+//}

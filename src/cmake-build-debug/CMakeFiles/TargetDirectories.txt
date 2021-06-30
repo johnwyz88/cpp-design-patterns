@@ -1,3 +1,0 @@
-/Users/yuzhw/CLionProjects/patterns/src/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/yuzhw/CLionProjects/patterns/src/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/yuzhw/CLionProjects/patterns/src/cmake-build-debug/CMakeFiles/patterns.dir
